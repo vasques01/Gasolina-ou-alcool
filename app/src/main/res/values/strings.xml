@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Gasolina ou Alcool</string>
     <string name="texto_botao_verificar">Verificar</string>
+    <string name="better_use_gas">É melhor utilizar GASOLINA</string>
+    <string name="better_use_alcohol">É melhor usar ALCOOL</string>
+    <string name="type_alcohol">Digite o valor do Alcool</string>
+    <string name="type_gas">Digite o valor do Gasolina</string>
 </resources>
