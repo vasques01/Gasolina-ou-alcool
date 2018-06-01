@@ -5,27 +5,27 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MainView{
 
     private EditText precoAlcool;
     private EditText precoGasolina;
     private Button botaoVerificar;
     private TextView textoResultado;
+    private ProgressBar progressBar;
+    private MainPresenterImpl presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        presenter = new MainPresenterImpl(this);
 
-
-        precoAlcool=findViewById(R.id.precoAlcoolId);
-        precoGasolina=findViewById(R.id.precoGasolinaId);
-        botaoVerificar=findViewById(R.id.botaoVerificarId);
-        textoResultado=findViewById(R.id.textoResultadoId);
+        initViews();
 
         botaoVerificar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -43,26 +43,42 @@ public class MainActivity extends AppCompatActivity {
 
                 //calculo = preco do alcool / preco gasolina ( se resultado > melhor usar GAS )
 
-                double resultado = valorAlcool / valorGasolina;
+                presenter.estimateBetterChoice(valorAlcool, valorGasolina);
 
-                if ( resultado >= 0.7 ){
-                    //Gasolina
-                    textoResultado.setText("E melhor utilizar GASOLINA");
-                }else {
-                    //Alcool
-                    textoResultado.setText("E melhor usar ALCOOL");
-                }
+                //validacao
 
-                    //validacao
-
-                    if (textoPrecoAlcool == null || precoAlcool.getText().toString().equals("")) {
-                        Toast.makeText(getApplicationContext(), "digite o valor do Alcool", Toast.LENGTH_SHORT).show();
-                    }
-                    if (textoPrecoGasolina == null || precoGasolina.getText().toString().equals("")) {
-                        Toast.makeText(getApplicationContext(), "digite o valor do Gasolina", Toast.LENGTH_SHORT).show();
-                    }
+                presenter.validateFields(textoPrecoAlcool, textoPrecoGasolina);
 
                 }
             });
+    }
+
+    private void initViews() {
+        precoAlcool = findViewById(R.id.precoAlcoolId);
+        precoGasolina = findViewById(R.id.precoGasolinaId);
+        botaoVerificar = findViewById(R.id.botaoVerificarId);
+        textoResultado = findViewById(R.id.textoResultadoId);
+        progressBar = findViewById(R.id.progressBar);
+    }
+
+    @Override
+    public void showLoading() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideLoading() {
+        progressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showResult(int stringId) {
+        textoResultado.setText(stringId);
+    }
+
+    @Override
+    public void onError(int stringId) {
+        Toast.makeText(this, getString(R.string.type_alcohol), Toast.LENGTH_SHORT).show();
+
     }
 }
